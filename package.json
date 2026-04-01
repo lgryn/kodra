@@ -1,0 +1,46 @@
+{
+  "name": "kodra",
+  "version": "0.1.0",
+  "description": "AI-powered CLI for working with code",
+  "author": "Liubomyr Hrynyshyn",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "kodra": "./dist/cli/index.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx src/cli/index.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "keywords": [
+    "cli",
+    "ai",
+    "developer-tools",
+    "code-analysis",
+    "openai"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lgryn/kodra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lgryn/kodra/issues"
+  },
+  "homepage": "https://github.com/lgryn/kodra#readme",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "commander": "^14.0.3",
+    "dotenv": "^17.3.1",
+    "openai": "^6.33.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "prettier": "3.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  }
+}

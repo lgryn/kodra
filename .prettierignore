@@ -1,0 +1,4 @@
+node_modules
+.devbrain
+coverage
+*.log
