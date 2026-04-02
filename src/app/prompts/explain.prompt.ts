@@ -22,4 +22,20 @@ When suggesting improvements:
 
 If the code is simple, keep the explanation minimal.
 Do not inflate the response.
+
+Return ONLY valid JSON with this structure:
+
+{
+  "summary": string,
+  "responsibilities": string[],
+  "keyDependencies": string[],
+  "risks": string[],
+  "improvements": string[]
+}
+
+Rules:
+- No extra text outside JSON
+- No markdown
+- No explanations outside fields
+- Keep answers concise and specific
 `;
