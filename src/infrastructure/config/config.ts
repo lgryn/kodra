@@ -5,11 +5,33 @@ const schema = z.object({
   OPENAI_MODEL: z.string().min(1),
 });
 
-const env = schema.parse(process.env);
+type Env = z.infer<typeof schema>;
 
-export const config = {
+export type AppConfig = {
   openAI: {
-    apiKey: env.OPENAI_API_KEY,
-    model: env.OPENAI_MODEL,
-  },
+    apiKey: string;
+    model: string;
+  };
 };
+
+let cachedConfig: AppConfig | null = null;
+
+function parseEnv(env: Env): AppConfig {
+  return {
+    openAI: {
+      apiKey: env.OPENAI_API_KEY,
+      model: env.OPENAI_MODEL,
+    },
+  };
+}
+
+export function getConfig(): AppConfig {
+  if (cachedConfig) {
+    return cachedConfig;
+  }
+
+  const env = schema.parse(process.env);
+  cachedConfig = parseEnv(env);
+
+  return cachedConfig;
+}

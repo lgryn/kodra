@@ -1,15 +1,30 @@
 import OpenAI from 'openai';
-import { config } from '@config/config';
+import { z } from 'zod';
+import { getConfig } from '@config/config';
 
-const openAi = new OpenAI({
-  apiKey: config.openAI.apiKey,
-});
+let openAI: OpenAI | null = null;
 
-export async function requestJsonResponse(
+function getOpenAIClient(): OpenAI {
+  if (openAI) {
+    return openAI;
+  }
+
+  const config = getConfig();
+  openAI = new OpenAI({
+    apiKey: config.openAI.apiKey,
+  });
+
+  return openAI;
+}
+
+export async function requestStructuredResponse<T>(
+  schema: z.ZodType<T>,
   instructions: string,
   input: string,
-): Promise<unknown> {
-  const response = await openAi.responses.create({
+): Promise<T> {
+  const config = getConfig();
+  const client = getOpenAIClient();
+  const response = await client.responses.create({
     model: config.openAI.model,
     instructions,
     input: [
@@ -20,9 +35,21 @@ export async function requestJsonResponse(
     ],
   });
 
+  let json: unknown;
+
   try {
-    return JSON.parse(response.output_text);
+    json = JSON.parse(response.output_text);
   } catch {
-    throw new Error('OpenAI client. API returned invalid JSON.');
+    throw new Error('OpenAI client. API returned invalid JSON for structured response request.');
   }
+
+  const parsedResponse = schema.safeParse(json);
+
+  if (!parsedResponse.success) {
+    throw new Error(
+      `OpenAI client. API returned invalid structured response: ${parsedResponse.error.message}`,
+    );
+  }
+
+  return parsedResponse.data;
 }
