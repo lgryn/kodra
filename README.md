@@ -18,7 +18,6 @@ Create `.env`:
 
 ```env
 OPENAI_API_KEY=your_key
-OPENAI_MODEL=gpt-4o-mini
 ```
 
 Run:
