@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { zodTextFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 import { getConfig } from '@config/config';
 
@@ -24,7 +25,7 @@ export async function requestStructuredResponse<T>(
 ): Promise<T> {
   const config = getConfig();
   const client = getOpenAIClient();
-  const response = await client.responses.create({
+  const response = await client.responses.parse({
     model: config.openAI.model,
     instructions,
     input: [
@@ -33,23 +34,14 @@ export async function requestStructuredResponse<T>(
         content: input,
       },
     ],
+    text: {
+      format: zodTextFormat(schema, 'structured_response'),
+    },
   });
 
-  let json: unknown;
-
-  try {
-    json = JSON.parse(response.output_text);
-  } catch {
-    throw new Error('OpenAI client. API returned invalid JSON for structured response request.');
+  if (!response.output_parsed) {
+    throw new Error('OpenAI client. API returned no parsed structured response.');
   }
 
-  const parsedResponse = schema.safeParse(json);
-
-  if (!parsedResponse.success) {
-    throw new Error(
-      `OpenAI client. API returned invalid structured response: ${parsedResponse.error.message}`,
-    );
-  }
-
-  return parsedResponse.data;
+  return response.output_parsed;
 }

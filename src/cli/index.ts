@@ -2,6 +2,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { registerExplainCommand } from '@cli/commands/explain.command';
+import { registerRefactorCommand } from '@cli/commands/refactor.command';
 
 const program = new Command();
 
@@ -12,6 +13,7 @@ program.addHelpText(
   `
 ${chalk.bold.cyan('Quick Start')}
   ${chalk.green('kodra explain <file>')}    Explain a code file with OpenAI
+  ${chalk.green('kodra refactor <file> --goal "<goal>"')}    Refactor a code file with OpenAI
 
 ${chalk.bold.yellow('Environment')}
   OpenAI-powered commands require a ${chalk.bold('.env')} file with:
@@ -20,9 +22,11 @@ ${chalk.bold.yellow('Environment')}
 
 ${chalk.bold.magenta('Example')}
   ${chalk.green('kodra explain src/cli/index.ts')}
+  ${chalk.green('kodra refactor src/cli/index.ts --goal "improve readability"')}
 `,
 );
 
 registerExplainCommand(program);
+registerRefactorCommand(program);
 
 program.parse();
